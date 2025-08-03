@@ -12,13 +12,11 @@ func main() {
 
 	l := log.New(os.Stdout, "product-api", log.LstdFlags)
 	h := g.NewHello(l)
+	gh := g.NewGoodbye(l)
 
 	sm := http.NewServeMux()
 	sm.Handle("/", h)
-
-	http.HandleFunc("/goodbye", func(rw http.ResponseWriter, r *http.Request) {
-		log.Println("Goodbye World")
-	})
+	sm.Handle("/goodbye", gh)
 
 	http.ListenAndServe(":9090", sm)
 }
