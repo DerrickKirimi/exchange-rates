@@ -1,6 +1,10 @@
 package data
 
-import "time"
+import (
+	"encoding/json"
+	"io"
+	"time"
+)
 
 type Product struct {
 	ID          int
@@ -36,6 +40,13 @@ var ProductList = []*Product{
 	},
 }
 
-func GetProducts() []*Product {
+type Products []*Product
+
+func GetProducts() Products {
 	return ProductList
+}
+
+func (p *Products) ToJson(w io.Writer) error {
+	encoder := json.NewEncoder(w)
+	return encoder.Encode(p)
 }
