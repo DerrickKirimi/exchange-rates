@@ -8,18 +8,15 @@ import (
 	"os/signal"
 	"time"
 
-	g "github.com/DerrickKirimi/exchange-rates/handlers"
+	"github.com/DerrickKirimi/exchange-rates/handlers"
 )
 
 func main() {
 
 	l := log.New(os.Stdout, "product-api", log.LstdFlags)
-	h := g.NewHello(l)
-	gh := g.NewGoodbye(l)
-
+	p := handlers.NewProducts(l)
 	sm := http.NewServeMux()
-	sm.Handle("/", h)
-	sm.Handle("/goodbye", gh)
+	sm.Handle("/", p)
 
 	s := &http.Server{
 		Addr:         ":9090",
@@ -43,6 +40,7 @@ func main() {
 	sig := <-sigchan
 	l.Println("Received terminate, graceful shutdown", sig)
 
-	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 	s.Shutdown(ctx)
 }
